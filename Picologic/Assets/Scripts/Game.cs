@@ -5,11 +5,49 @@ using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
-    [SerializeField] private Item[] Items;
+    [SerializeField] GameObject[] CellItems;
+    [SerializeField] private string winWord;
+    private ICell[] items;
+    private int stage;
+    private string enterWord;
+
+    private void Awake()
+    {
+        Load();
+        items = new ICell[CellItems.Length];
+        for (int i = 0; i < CellItems.Length; i++)
+        {
+            items[i] = CellItems[i].GetComponent<ICell>();
+        }
+        GameUpdate();
+    }
+    private void GameUpdate()
+    {
+        for (int i = 0; i <= stage; i++)
+            items[i].SetOpen();
+        for (int i = stage + 2; i < items.Length; i++)
+            items[i].SetLock();
+        if (stage + 1 < items.Length)
+            items[stage + 1].SetBuy();
+    }
+    private bool WinCheck()
+    {
+        return false;
+    }
+    private void Win()
+    {
+
+    }
+    public void EnterWord (string word)
+    {
+        enterWord = word;
+        if (WinCheck())
+            Win();
+    }
+    public void Load()
+    {
+        stage = 0;
+        enterWord = "";
+    }
 }
-[System.Serializable]
-public struct Item
-{
-    public GameObject itemObject;
-    public Image blockBackGround;
-}
+

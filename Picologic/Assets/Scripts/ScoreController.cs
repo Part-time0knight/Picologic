@@ -1,14 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ScoreController : MonoBehaviour
 {
+    [SerializeField] private int startScore = 0;
     public static ScoreController Score { get { return score; } }
     private static ScoreController score;
 
-    [SerializeField] private Text ScoreText;
+    private readonly List<IScore> scoreItems = new List<IScore>();
 
     private int scoreCount;
 
@@ -16,16 +16,26 @@ public class ScoreController : MonoBehaviour
     {
         if (!score)
             score = this;
-        scoreCount = Load();
+        Load();
         ScoreUpdate();
     }
     public void ScoreUpdate(int addNumber = 0)
     {
         scoreCount += addNumber;
-        ScoreText.text = "" + scoreCount;
+        for (int i = 0; i < scoreItems.Count; i++)
+            scoreItems[i].UpdateCount(scoreCount);
     }
-    public int Load()
+    public void AddItem( IScore item )
     {
-        return 0;
+        item.UpdateCount(scoreCount);
+        scoreItems.Add(item);
+    }
+    public void RemoveItem(IScore item)
+    {
+        scoreItems.Remove(item);
+    }
+    public void Load()
+    {
+        scoreCount = startScore;
     }
 }
