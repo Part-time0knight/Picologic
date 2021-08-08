@@ -10,6 +10,18 @@ public class Game : MonoBehaviour
     private ICell[] items;
     private int stage;
     private string enterWord;
+    private IInput _input;
+    public IInput input
+    { 
+        set 
+        {
+            if (_input == null)
+            {
+                _input = value;
+                _input.SetWord(winWord);
+            }
+        } 
+    }
 
     private void Awake()
     {
@@ -18,6 +30,7 @@ public class Game : MonoBehaviour
         for (int i = 0; i < CellItems.Length; i++)
         {
             items[i] = CellItems[i].GetComponent<ICell>();
+            items[i].Init(this);
         }
         GameUpdate();
     }
@@ -37,6 +50,11 @@ public class Game : MonoBehaviour
     private void Win()
     {
 
+    }
+    public void OpenNext()
+    {
+        stage++;
+        GameUpdate();
     }
     public void EnterWord (string word)
     {

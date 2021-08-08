@@ -10,6 +10,7 @@ public class ScoreController : MonoBehaviour
 
     private readonly List<IScore> scoreItems = new List<IScore>();
 
+    public int getScore { get { return scoreCount; } }
     private int scoreCount;
 
     private void Awake()
