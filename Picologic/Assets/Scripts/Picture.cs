@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Picture : MonoBehaviour, ICell
+public class Picture : MonoBehaviour, ICell, IButton
 {
     [SerializeField] private GameObject photo;
     [SerializeField] private GameObject block;
@@ -11,7 +11,7 @@ public class Picture : MonoBehaviour, ICell
     [SerializeField] private Image panelZoom;
     [SerializeField] private int cost = 2;
     [SerializeField] private Vector2 zoom = new Vector2(929.2f, 929.2f);
-
+    public bool Active { get { return button.enabled; } set { button.enabled = value; if (zoomIn) ZoomOut(); } }
     private bool setPhoto {
         set {
             if (value == true)
@@ -71,6 +71,11 @@ public class Picture : MonoBehaviour, ICell
         standart.x = rectPhoto.rect.width;
         standart.y = rectPhoto.rect.height;
         standartPos = rectPhoto.anchoredPosition;
+        AnimController.Mouse.AddButton(this);
+    }
+    private void OnDestroy()
+    {
+        AnimController.Mouse.DeleteButton(this);
     }
     public void SetOpen()
     {

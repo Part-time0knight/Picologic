@@ -5,10 +5,9 @@ using UnityEngine.UI;
 
 public class GameInput : MonoBehaviour, IInput
 {
-    [SerializeField] private Game game;
-    [SerializeField] private string alphabet = "abcdefghijklmnopqrstuvwxyz";
-    [SerializeField] private int letterClickPanelColumns = 7;
-    [SerializeField] private int letterClickPanelRows = 2;
+    private const float TIME = 2f;
+    [SerializeField] private GameObject gameObj;
+
     [SerializeField] private GameObject letterViewPanel;
     [SerializeField] private GameObject letterClickPanel;
     [SerializeField] private LetterView letterViewPrefab;
@@ -17,90 +16,164 @@ public class GameInput : MonoBehaviour, IInput
     [SerializeField] private float sizeMin = 100f;
     [SerializeField] private int startResize = 6;
     [SerializeField] private int MaxSize= 9;
-    private string enterWord = "";
-    private string mainWord;
-    private string letterViewPrefabsString;
+    private IGameController game;
+    private string mainString;
     private int letterClickPanelCount;
+    private int viewLength;
     private readonly List<LetterView> letterViews = new List<LetterView>();
     private readonly List<LetterInput> letterClicks = new List<LetterInput>();
-    private readonly List<char> alphabetList = new List<char>();
     private readonly List<int> order = new List<int>();
-    public void SetWord( string word )
-    {
-        mainWord = word;
-    }
     private void Awake()
     {
+        game = gameObj.GetComponent<IGameController>();
         game.input = this;
-        float newSize = Step();
-        letterClickPanelCount = letterClickPanelColumns * letterClickPanelRows;
-        for (int i = 0; i < mainWord.Length; i++)
+    }
+    public void Init(string main, int viewLength, int InputCount)
+    {
+        mainString = main;
+        this.viewLength = viewLength; 
+        letterClickPanelCount = InputCount;
+        ViewInit();
+        InputInit();
+
+    }
+    //-----создание поля вывода
+    private void ViewInit()
+    {
+        float newSize = ViewSizeGet();
+        for (int i = 0; i < viewLength; i++)
         {
             letterViews.Add(Instantiate(letterViewPrefab, letterViewPanel.transform));
+            letterViews[letterViews.Count - 1].InitViewItem(this, i);
             RectTransform rect = letterViews[letterViews.Count - 1].GetComponent<RectTransform>();
             rect.sizeDelta = new Vector2(newSize, newSize);
         }
-        List<int> temp = new List<int>();
-
-        //-----порядок букв в поле ввода
-        for (int i = 0; i < letterClickPanelCount; i++)
-        {
-            temp.Add(i);
-        }
-        for (int i = 0; i < letterClickPanelCount; i++)
-        {
-            int index = Random.Range(0, temp.Count);
-            int item = temp[index];
-            temp.RemoveAt(index);
-            order.Add(item);
-        }
-        for (int i = 0; i < mainWord.Length; i++)
-        {
-            alphabetList.Add(mainWord[i]);
-        }
-        for (int i = alphabetList.Count - 1; i < letterClickPanelCount; i++)
-        {
-            alphabetList.Add(alphabet[Random.Range(0, alphabet.Length)]);
-        }
-        //-----Создание поля ввода
+    }
+    //-----создание поля ввода
+    private void InputInit() 
+    {
         for (int i = 0; i < letterClickPanelCount; i++)
         {
             LetterInput item = Instantiate(letterClickPrefab, letterClickPanel.transform);
             letterClicks.Add(item);
-            item.SetLetter(alphabetList[order[i]], this);
+            letterClicks[i].SetLetter(this, mainString[i]);
         }
     }
-    private float Step()
+    private float ViewSizeGet()
     {
-        if (mainWord.Length <= startResize)
+        if (viewLength <= startResize)
             return sizeMax;
-        float res = sizeMax - (sizeMax - sizeMin) / (MaxSize - startResize) * (mainWord.Length - startResize);
+        float res = sizeMax - (sizeMax - sizeMin) / (MaxSize - startResize) * (viewLength - startResize);
         return res;
     }
-
-    public bool EnterLetter( char letter )
+    public void DeleteLetter(char letter, int pos)
     {
-        enterWord += letter;
-        if (enterWord.Length <= mainWord.Length)
+        letterViews[pos].ResetLetter();
+        LetterInput item = FindLetter(letter, false);
+        item.Active = true;
+        game.DeleteLetter(pos);
+    }
+    private LetterInput FindLetter(char letter, bool active)
+    {
+        for (int i = 0; i < letterClicks.Count; i++)
         {
-
-            letterViews[enterWord.Length - 1].SetLetter("" + letter);
+            if (letterClicks[i].Active == active && letterClicks[i].Letter == letter)
+            {
+                return letterClicks[i];
+            }
         }
-        else if (WinCheck())
-            Win();
-        else
-            Restart();
-        return true;
-
+        return null;
     }
-    private bool WinCheck()
+    public void SetLetter(char letter, int pos, bool solid)
     {
-        return false;
+        letterViews[pos].SetLetter(letter);
+        if (solid)
+            letterViews[pos].Correct = true;
     }
-    private void Win()
+    public void BlockLetter(char letter)
     {
+        for (int i = 0; i < letterViews.Count; i++)
+        {
+            letterViews[i].ResetItem();
+        }
+        for (int i = 0; i < letterClicks.Count; i++)
+        {
+            letterClicks[i].Active = true;
+        }
+        LetterInput item = FindLetter(letter, true);
+        item.LetterBlock();
     }
-    private void Restart()
+    public void SetTrueLetter(char letter, int pos)
     {
+        for (int i = 0; i < letterViews.Count; i++)
+        {
+            letterViews[i].ResetItem();
+        }
+        for (int i = 0; i < letterClicks.Count; i++)
+        {
+            letterClicks[i].Active = true;
+        }
+        SetLetter(letter, pos, true);
+        LetterInput item = FindLetter(letter, true);
+        item.LetterBlock();
+    }
+    public void EnterLetter( char letter )
+    {
+        game.EnterLetter(letter);
+    }
+    public void InputWin()
+    {
+        AnimController.Mouse.MouseActive = false;
+        for (int i = 0; i < letterViews.Count; i++)
+        {
+            letterViews[i].Correct = true;
+        }
+        for (int i = 0; i < letterClicks.Count; i++)
+        {
+            letterClicks[i].LetterUnBlock();
+            letterClicks[i].Active = false;
+        }
+        StartCoroutine(EndWin());
+    }
+    public void InputReset()
+    {
+        AnimController.Mouse.MouseActive = false;
+        for (int i = 0; i < letterViews.Count; i++)
+        {
+            if (!letterViews[i].Correct)
+                letterViews[i].Correct = false;
+        }
+        for (int i = 0; i < letterClicks.Count; i++)
+        {
+            letterClicks[i].Active = false;
+        }
+        StartCoroutine(EndReset());
+    }
+    private IEnumerator EndWin()
+    {
+        yield return new WaitForSeconds(TIME);
+        for (int i = 0; i < letterViews.Count; i++)
+        {
+            letterViews[i].ResetLetter();
+        }
+        for (int i = 0; i < letterClicks.Count; i++)
+        {
+            letterClicks[i].Active = true;
+        }
+        AnimController.Mouse.MouseActive = true;
+        SceneController.sceneController.WinGame();
+    }
+    private IEnumerator EndReset()
+    {
+        yield return new WaitForSeconds(TIME);
+        for (int i = 0; i < letterViews.Count; i++)
+        {
+            letterViews[i].ResetItem();
+        }
+        for (int i = 0; i < letterClicks.Count; i++)
+        {
+            letterClicks[i].Active = true;
+        }
+        AnimController.Mouse.MouseActive = true;
     }
 }
