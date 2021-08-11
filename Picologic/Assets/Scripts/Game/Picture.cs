@@ -71,6 +71,10 @@ public class Picture : MonoBehaviour, ICell, IButton
         standart.x = rectPhoto.rect.width;
         standart.y = rectPhoto.rect.height;
         standartPos = rectPhoto.anchoredPosition;
+
+    }
+    private void Start()
+    {
         AnimController.Mouse.AddButton(this);
     }
     private void OnDestroy()

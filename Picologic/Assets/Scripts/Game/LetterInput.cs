@@ -19,6 +19,9 @@ public class LetterInput : MonoBehaviour, IButton
         text.color = active;
         button = GetComponent<Button>();
         button.onClick.AddListener(Click);
+    }
+    private void Start()
+    {
         AnimController.Mouse.AddButton(this);
     }
     private void OnDestroy()

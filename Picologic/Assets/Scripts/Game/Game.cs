@@ -15,7 +15,7 @@ public class Game : MonoBehaviour, IGameController
     private bool[] opened;
     private readonly List<int> freeIndex = new List<int>();
     private ICell[] items;
-    private int stage;
+    private int stage = 0;
     private char[] enterWord;
     private IInput _input;
     public IInput input

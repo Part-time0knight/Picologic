@@ -27,6 +27,9 @@ public class LetterView : MonoBehaviour, IButton
         emptyColor = Color.white;
         button.onClick.AddListener(ClickLetter);
         button.enabled = false;
+    }
+    private void Start()
+    {
         AnimController.Mouse.AddButton(this);
     }
     private void OnDestroy()

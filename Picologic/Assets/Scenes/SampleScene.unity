@@ -2414,6 +2414,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 66426178}
     m_Modifications:
+    - target: {fileID: 879627697145393931, guid: ef3a4e76eb7e5644ba156bc9d17b542b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1811818272235468316, guid: ef3a4e76eb7e5644ba156bc9d17b542b, type: 3}
       propertyPath: m_Name
       value: Panel Game
@@ -2500,6 +2504,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1811818272235468319, guid: ef3a4e76eb7e5644ba156bc9d17b542b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2032112556875623344, guid: ef3a4e76eb7e5644ba156bc9d17b542b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3880030642478108931, guid: ef3a4e76eb7e5644ba156bc9d17b542b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8608396857169194525, guid: ef3a4e76eb7e5644ba156bc9d17b542b, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
