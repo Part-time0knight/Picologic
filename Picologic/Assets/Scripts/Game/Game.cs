@@ -50,6 +50,10 @@ public class Game : MonoBehaviour, IGameController
         }
         
         Load();
+
+    }
+    private void Start()
+    {
         GameUpdate();
     }
     private void GenerateCharSet()
@@ -85,7 +89,7 @@ public class Game : MonoBehaviour, IGameController
         if (stage + 1 < items.Length)
             items[stage + 1].SetBuy();
     }
-    private bool WinCheck()
+    private bool WinCheck() 
     {
         for (int i = 0; i < enterWord.Length; i++)
             if (enterWord[i] != winWord[i])
