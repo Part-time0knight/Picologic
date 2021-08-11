@@ -14,6 +14,6 @@ public class SceneController : MonoBehaviour, IScene
     }
     public void WinGame()
     {
-
+        ScoreController.Score.ScoreUpdate(+50);
     }
 }

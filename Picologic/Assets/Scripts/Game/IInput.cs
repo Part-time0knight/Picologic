@@ -10,5 +10,6 @@ public interface IInput
     public void BlockLetter(char letter);
     public void SetTrueLetter(char letter, int pos);
     public void InputWin();
-    public void InputReset();
+    public void InputRestart();
+    public void InputLose();
 }

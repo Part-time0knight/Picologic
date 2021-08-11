@@ -9,6 +9,7 @@ public class Game : MonoBehaviour, IGameController
     [SerializeField] private string winWord;
     [SerializeField] private string alphabet = "abcdefghijklmnopqrstuvwxyz";
     [SerializeField] private int InputCount = 14;
+    private ResetButton FalseLetters;
     private string charSet = "";
     private string charSetFalse = "";
     private bool[] opened;
@@ -99,6 +100,11 @@ public class Game : MonoBehaviour, IGameController
             opened[i] = false;
             freeIndex.Add(i);
         }
+        if (FalseLetters != null)
+        {
+            FalseLetters();
+            FalseLetters = null;
+        }
         _input.InputWin();
     }
     public void OpenNext()
@@ -120,14 +126,14 @@ public class Game : MonoBehaviour, IGameController
         }
         return index;
     }
-    private void GameReset()
+    private void Lose()
     {
         for (int i = 0; i < enterWord.Length; i++)
         {
             if (!opened[i])
                 enterWord[i] = ' ';
         }
-        _input.InputReset();
+        _input.InputLose();
     }
     public void EnterLetter (char letter)
     {
@@ -140,16 +146,26 @@ public class Game : MonoBehaviour, IGameController
         }
         else if (FreePos() < 0)
         {
-            GameReset();
+            Lose();
         }
     }
-    public void BlockFalseLetters()
+    public void Restart()
+    {
+        for (int i = 0; i < enterWord.Length; i++)
+        {
+            if (!opened[i])
+                enterWord[i] = ' ';
+        }
+        _input.InputRestart();
+    }
+    public void BlockFalseLetters(ResetButton FalseLetters)
     {
         for (int i = 0; i < charSetFalse.Length; i++)
         {
             char letter = charSetFalse[i];
             _input.BlockLetter(letter);
         }
+        this.FalseLetters = FalseLetters;
     }
     public void SetTrueLetter()
     {

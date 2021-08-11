@@ -121,6 +121,18 @@ public class GameInput : MonoBehaviour, IInput
     {
         game.EnterLetter(letter);
     }
+
+    public void InputRestart()
+    {
+        for (int i = 0; i < letterViews.Count; i++)
+        {
+            letterViews[i].ResetItem();
+        }
+        for (int i = 0; i < letterClicks.Count; i++)
+        {
+            letterClicks[i].Active = true;
+        }
+    }
     public void InputWin()
     {
         AnimController.Mouse.MouseActive = false;
@@ -135,7 +147,7 @@ public class GameInput : MonoBehaviour, IInput
         }
         StartCoroutine(EndWin());
     }
-    public void InputReset()
+    public void InputLose()
     {
         AnimController.Mouse.MouseActive = false;
         for (int i = 0; i < letterViews.Count; i++)
@@ -147,7 +159,7 @@ public class GameInput : MonoBehaviour, IInput
         {
             letterClicks[i].Active = false;
         }
-        StartCoroutine(EndReset());
+        StartCoroutine(EndLose());
     }
     private IEnumerator EndWin()
     {
@@ -163,7 +175,7 @@ public class GameInput : MonoBehaviour, IInput
         AnimController.Mouse.MouseActive = true;
         SceneController.sceneController.WinGame();
     }
-    private IEnumerator EndReset()
+    private IEnumerator EndLose()
     {
         yield return new WaitForSeconds(TIME);
         for (int i = 0; i < letterViews.Count; i++)
