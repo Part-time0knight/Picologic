@@ -110,6 +110,8 @@ public class Game : MonoBehaviour, IGameController
             FalseLetters = null;
         }
         _input.InputWin();
+        stage = 0;
+        GameUpdate();
     }
     public void OpenNext()
     {
